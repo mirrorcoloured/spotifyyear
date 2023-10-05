@@ -13,9 +13,17 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = 'CLIENT_ID'; // Your client id
-var client_secret = 'CLIENT_SECRET'; // Your secret
-var redirect_uri = 'REDIRECT_URI'; // Your redirect uri
+const listening_port = 8888;
+
+// load client id and secret from environment variables
+const client_id = process.env.spotifyyear_client_id;
+const client_secret = process.env.spotifyyear_client_secret;
+console.log('running app with client id', client_id, 'client secret', client_secret);
+
+const uri = `http://localhost:${listening_port}`;
+// const uri = `http://pjsc.me:${listening_port}`;
+// const uri = `http://spotify-this-year.azurewebsites.net`;
+const redirect_uri = `${uri}/callback`; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -46,7 +54,16 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = [
+    'user-read-private',
+    'user-read-email',
+    'user-library-read',
+    'user-read-private',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    'playlist-modify-public',
+    'playlist-modify-private',
+  ].join(" ");
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -143,5 +160,5 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+console.log(`Listening on ${uri}`);
+app.listen(listening_port);

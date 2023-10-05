@@ -1,0 +1,21 @@
+#login, #loggedin {
+    display: none;
+  }
+  .text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 500px;
+  }
+
+th, td {
+  padding-right: 5px;
+}
+
+.id-input {
+  width: 270px;
+}
+
+#year-input {
+  width: 50px;
+}

@@ -30,9 +30,10 @@
 
     // get parameters from url
     var params = getHashParams();
-    var access_token = params.access_token,
-        refresh_token = params.refresh_token,
-        error = params.error;
+    let access_token = params.access_token
+    let refresh_token = params.refresh_token
+    let error = params.error;
+    let admin = params.admin || false;
 
     if (error) {
         alert('There was an error during the authentication');
@@ -53,6 +54,7 @@
             success: function(response) {
                 // hide initial screen and show logged in content
                 response['thisYear'] = new Date().getFullYear();
+                response['admin'] = admin;
                 userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                 playlistPlaceholder.innerHTML = playlistTemplate(response);
 

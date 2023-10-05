@@ -57,7 +57,10 @@
     <script id="playlist-template" type="text/x-handlebars-template">
       <h2>Playlist info</h2>
         <!-- <button class="btn btn-default" id="btn-test">TEST</button> -->
+        {{#if admin}}
         <button class="btn btn-default" id="download-all-stats">Download details on all my playlists</button>
+        {{/if}}
+
         <button class="btn btn-default" id="create-new-this-year-playlist">Create released-this-year playlist</button>
         <input id="year-input" maxlength="4" value="{{thisYear}}">
       <hr>
@@ -77,14 +80,18 @@
         <!-- <input id="playlist-input" placeholder="Playlist Id" value=""> -->
         <button class="btn btn-default" id="get-playlist-data">Get playlist data</button>
         <button class="btn btn-default" id="dl-playlist-data">Download playlist data</button>
+        {{#if admin}}
         <button class="btn btn-default" id="get-detailed-playlist-info">Get detailed playlist data</button>
         <button class="btn btn-default" id="dl-detailed-playlist-info">Download detailed playlist data</button>
+        {{/if}}
         <div id="playlist-response"></div>
+      {{#if admin}}
       <hr>
         <input id="track-input" class="id-input" placeholder="<Track Id>" value="">
         <!-- <input id="track-input" placeholder="Track Id" value=""> -->
         <button class="btn btn-default" id="get-track-info">Get song data</button>
         <div id="track-response"></div>
+      {{/if}}
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>

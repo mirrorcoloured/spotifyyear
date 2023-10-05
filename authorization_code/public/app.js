@@ -417,8 +417,8 @@
             document.getElementById('dl-playlist-data')?.addEventListener('click', btnDownloadPlaylistTracks);
             document.getElementById('get-detailed-playlist-info')?.addEventListener('click', btnGetPlaylistDetails);
             document.getElementById('dl-detailed-playlist-info')?.addEventListener('click', btnDownloadPlaylistDetails);
-            document.getElementById('download-all-stats')?.addEventListener('click', downloadAllMyPlaylistDetails);
-            document.getElementById('create-new-this-year-playlist')?.addEventListener('click', createReleasedThisYearPlaylist);
+            document.getElementById('download-all-stats')?.addEventListener('click', btnDownloadAllMyPlaylistDetails);
+            document.getElementById('create-new-this-year-playlist')?.addEventListener('click', btnCreateReleasedThisYearPlaylist);
 
             document.getElementById('btn-test')?.addEventListener('click', funcTEST);
         }
@@ -490,6 +490,23 @@
                 hideProgressAnimation();
             })
         }
+
+        function btnCreateReleasedThisYearPlaylist() {
+            showProgressAnimation();
+            createReleasedThisYearPlaylist().then(function () {
+                hideProgressAnimation();
+            })
+        }
+        
+        function btnDownloadAllMyPlaylistDetails() {
+            showProgressAnimation();
+            downloadAllMyPlaylistDetails().then(function (args) {
+                const [tracks, all_analysis] = args;
+                download_file(json_to_csv(tracks), 'tracks.csv');
+                download_file(json_to_csv(all_analysis), 'analysis.csv');
+                hideProgressAnimation();
+            })
+        }
         
 
 
@@ -536,7 +553,7 @@
             const batch_size = 100;
             const delay_ms = 2000;
 
-            getUserPlaylists(`https://api.spotify.com/v1/users/${user_id}/playlists`, function(item) {
+            return getUserPlaylists(`https://api.spotify.com/v1/users/${user_id}/playlists`, function(item) {
                 return {
                     id: item.id,
                     href: item.href,
@@ -612,13 +629,6 @@
                     }
                 })
             })
-            .then(function (args) {
-                const [tracks, all_analysis] = args;
-                console.log(`Downloading tracks and analysis (${tracks.length}, ${all_analysis.length})`);
-                console.log(args);
-                download_file(json_to_csv(tracks), 'tracks.csv');
-                download_file(json_to_csv(all_analysis), 'analysis.csv');
-            })
         }
 
 
@@ -629,7 +639,7 @@
             const playlist_prefix = 'my-released-';
             
             
-            getUserPlaylists(`https://api.spotify.com/v1/users/${user_id}/playlists`, function(item) {
+            return getUserPlaylists(`https://api.spotify.com/v1/users/${user_id}/playlists`, function(item) {
                 return {
                     href: item.href,
                     name: item.name,

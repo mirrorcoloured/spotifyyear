@@ -21,6 +21,21 @@ th, td {
   width: 50px;
 }
 
+video {
+  display: block;
+}
+
+#progress-animation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hidden {
+  display: none;
+}
+
 #btn_reset {
   padding: 2px;
 }

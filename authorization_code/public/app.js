@@ -119,6 +119,14 @@
             return document.getElementById('playlist-input')?.value;
         }
 
+        function showProgressAnimation() {
+            document.getElementById('progress-animation')?.classList.remove('hidden');
+        }
+        
+        function hideProgressAnimation() {
+            document.getElementById('progress-animation')?.classList.add('hidden');
+        }
+
 
         function getUserPlaylists (url, playlistItemInfoExtractor, verbose=false) {
             return new Promise(function (resolve, reject) {
@@ -418,10 +426,71 @@
         // TODO recommendations?
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations
 
+        function btnGetUserPlaylists() {
+            showProgressAnimation();
+            pullUserPlaylists().then(function (result) {
+                document.getElementById('playlist-results')?.appendChild(loo_to_html(result));
+                hideProgressAnimation();
+            })
+        }
+        
+        function btnDownloadUserPlaylists() {
+            showProgressAnimation();
+            pullUserPlaylists().then(function (result) {
+                download_file(json_to_csv(result), 'playlists.csv');
+                hideProgressAnimation();
+            })
+        }
+        
+        function btnGetPlaylistTracks() {
+            showProgressAnimation();
+            const playlist_id = getPlaylistId();
+            pullPlaylistTracks(playlist_id).then(function (result) {
+                document.getElementById('playlist-response')?.appendChild(loo_to_html(result));
+                hideProgressAnimation();
+            });
+        }
+        
+        function btnDownloadPlaylistTracks() {
+            showProgressAnimation();
+            const playlist_id = getPlaylistId();
+            pullPlaylistTracks(playlist_id).then(function (result) {
+                download_file(json_to_csv(result), `${playlist_id}_tracks.csv`);
+                hideProgressAnimation();
+            });
+        }
+        
+        function btnGetPlaylistDetails() {
+            showProgressAnimation();
+            const playlist_id = getPlaylistId();
+            pullPlaylistDetails(playlist_id).then(function (args) {
+                const [trackdetails, artist_info] = args;
+                document.getElementById('playlist-response')?.appendChild(loo_to_html(artist_info));
+                document.getElementById('playlist-response')?.appendChild(loo_to_html(trackdetails));
+                hideProgressAnimation();
+            })
+        }
+        
+        function btnDownloadPlaylistDetails() {
+            showProgressAnimation();
+            const playlist_id = getPlaylistId();
+            pullPlaylistDetails(playlist_id).then(function (args) {
+                const [trackdetails, artist_info] = args;
+                download_file(json_to_csv(trackdetails), `${playlist_id}_trackdetails.csv`);
+                download_file(json_to_csv(artist_info), `${playlist_id}_artistdetails.csv`);
+                hideProgressAnimation();
+            })
+        }
 
-
-
-
+        function btnGetTrackInfo() {
+            showProgressAnimation();
+            const track_id = document.getElementById('track-input')?.value;
+            getTrackFeatures(track_id).then(function (result) {
+                document.getElementById('track-response')?.appendChild(loo_to_html([result]));
+                hideProgressAnimation();
+            })
+        }
+        
 
 
 
@@ -625,14 +694,6 @@
         }
         
         
-        function btnGetTrackInfo() {
-            const track_id = document.getElementById('track-input')?.value;
-            getTrackFeatures(track_id).then(function (result) {
-                document.getElementById('track-response')?.appendChild(loo_to_html([result]));
-            })
-        }
-
-
         function pullUserPlaylists() {
             const user_id = getUserId();
             return getUserPlaylists(`https://api.spotify.com/v1/users/${user_id}/playlists`, function(item) {
@@ -647,18 +708,6 @@
             })
         }
         
-        function btnGetUserPlaylists() {
-            pullUserPlaylists().then(function (result) {
-                document.getElementById('playlist-results')?.appendChild(loo_to_html(result));
-            })
-        }
-        
-        function btnDownloadUserPlaylists() {
-            pullUserPlaylists().then(function (result) {
-                download_file(json_to_csv(result), 'playlists.csv');
-            })
-        }
-
 
         function pullPlaylistTracks(playlist_id) {
             const url = playlist_id == "liked" ? `https://api.spotify.com/v1/me/tracks` : `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`;
@@ -673,20 +722,6 @@
                     release: item.track.album.release_date,
                 }
             })
-        }
-
-        function btnGetPlaylistTracks() {
-            const playlist_id = getPlaylistId();
-            pullPlaylistTracks(playlist_id).then(function (result) {
-                document.getElementById('playlist-response')?.appendChild(loo_to_html(result));
-            });
-        }
-
-        function btnDownloadPlaylistTracks() {
-            const playlist_id = getPlaylistId();
-            pullPlaylistTracks(playlist_id).then(function (result) {
-                download_file(json_to_csv(result), `${playlist_id}_tracks.csv`);
-            });
         }
 
         
@@ -775,25 +810,6 @@
                 })
             })
         }
-
-        function btnGetPlaylistDetails() {
-            const playlist_id = getPlaylistId();
-            pullPlaylistDetails(playlist_id).then(function (args) {
-                const [trackdetails, artist_info] = args;
-                document.getElementById('playlist-response')?.appendChild(loo_to_html(artist_info));
-                document.getElementById('playlist-response')?.appendChild(loo_to_html(trackdetails));
-            })
-        }
-
-        function btnDownloadPlaylistDetails() {
-            const playlist_id = getPlaylistId();
-            pullPlaylistDetails(playlist_id).then(function (args) {
-                const [trackdetails, artist_info] = args;
-                download_file(json_to_csv(trackdetails), `${playlist_id}_trackdetails.csv`);
-                download_file(json_to_csv(artist_info), `${playlist_id}_artistdetails.csv`);
-            })
-        }
-
     }
 
 

@@ -7,7 +7,7 @@
   </head>
 
   <body>
-    <a href="/">RESET</a>
+    <a id="btn_reset" href="/">RESET</a>
     <div class="container">
       <div id="login">
         <h2>Log in to allow spotify-this-year to access your Spotify data</h2>
@@ -15,8 +15,14 @@
       </div>
 
       <div id="loggedin">
-        <div id="user-profile"></div>
-        <div id="oauth"></div>
+        <div class="row">
+            <div id="left" class="column">
+                <div id="user-profile"></div>
+            </div>
+            <div id="right" class="column">
+                <div id="oauth"></div>
+            </div>
+        </div>
         <div id="playlist"></div>
       </div>
     </div>

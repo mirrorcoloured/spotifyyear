@@ -1,12 +1,13 @@
 #login, #loggedin {
     display: none;
   }
-  .text-overflow {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 500px;
-  }
+
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 500px;
+}
 
 th, td {
   padding-right: 5px;
@@ -18,4 +19,28 @@ th, td {
 
 #year-input {
   width: 50px;
+}
+
+#btn_reset {
+  padding: 2px;
+}
+
+.container {
+  margin: 3px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+#left {
+  left: 0;
+  width: 50%;
 }

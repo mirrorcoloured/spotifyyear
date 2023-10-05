@@ -20,9 +20,13 @@ const client_id = process.env.spotifyyear_client_id;
 const client_secret = process.env.spotifyyear_client_secret;
 console.log('running app with client id', client_id, 'client secret', client_secret);
 
-const uri = `http://localhost:${listening_port}`;
+// const uri = `http://localhost:${listening_port}`;
 // const uri = `http://pjsc.me:${listening_port}`;
+<<<<<<< HEAD
 const uri = `https://spotify-this-year.azurewebsites.net`;
+=======
+const uri = `http://spotify-this-year.azurewebsites.net`;
+>>>>>>> 4de7fc8 (updated uri for azure)
 const redirect_uri = `${uri}/callback`; // Your redirect uri
 
 /**

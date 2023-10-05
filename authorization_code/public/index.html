@@ -3,36 +3,27 @@
   <head>
     <title>Example of the Authorization Code flow with Spotify</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
-    </style>
+    <link type="text/css" rel="stylesheet" href="style.css">
   </head>
 
   <body>
+    <a href="/">RESET</a>
     <div class="container">
       <div id="login">
         <h1>This is an example of the Authorization Code flow</h1>
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
       </div>
+
       <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <div id="user-profile"></div>
+        <div id="oauth"></div>
+        <div id="playlist"></div>
       </div>
     </div>
+      
 
     <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1>Logged in as {{display_name}}</h1>
+      <h2>User info</h2>
       <div class="media">
         <div class="pull-left">
           <img class="media-object" width="150" src="{{images.0.url}}" />
@@ -54,89 +45,51 @@
     <script id="oauth-template" type="text/x-handlebars-template">
       <h2>oAuth info</h2>
       <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+        <button class="btn btn-default" id="obtain-new-token">Obtain new access token</button>
+        <br>
+        <dt>Access token</dt>
+        <dd class="text">{{access_token}}</dd>
+        <dt>Refresh token</dt>
+        <dd class="text">{{refresh_token}}</dd>
       </dl>
+    </script>
+    
+    <script id="playlist-template" type="text/x-handlebars-template">
+      <h2>Playlist info</h2>
+        <!-- <button class="btn btn-default" id="btn-test">TEST</button> -->
+        <button class="btn btn-default" id="download-all-stats">Download details on all my playlists</button>
+        <button class="btn btn-default" id="create-new-this-year-playlist">Create released-this-year playlist</button>
+        <input id="year-input" maxlength="4" value="{{thisYear}}">
+      <hr>
+        <span>User id:</span>
+        <!-- <input id="user-input" placeholder="User Id"> -->
+        <input id="user-input" class="id-input" placeholder="<User Id>" value="{{id}}">
+        <button class="btn btn-default" id="get-playlists">Get playlists</button>
+        <button class="btn btn-default" id="dl-playlists">Download playlists</button>
+        <div id="playlist-results"></div>
+      <!-- <hr>
+        <button class="btn btn-default" id="get-liked">Get liked songs</button>
+        <button class="btn btn-default" id="dl-liked">Download liked songs</button>
+        <div id="liked-results"></div> -->
+      <hr>
+        <span>Playlist id:</span>
+        <input id="playlist-input" class="id-input" placeholder="<Playlist Id> or `liked` (without backticks)">
+        <!-- <input id="playlist-input" placeholder="Playlist Id" value=""> -->
+        <button class="btn btn-default" id="get-playlist-data">Get playlist data</button>
+        <button class="btn btn-default" id="dl-playlist-data">Download playlist data</button>
+        <button class="btn btn-default" id="get-detailed-playlist-info">Get detailed playlist data</button>
+        <button class="btn btn-default" id="dl-detailed-playlist-info">Download detailed playlist data</button>
+        <div id="playlist-response"></div>
+      <hr>
+        <input id="track-input" class="id-input" placeholder="<Track Id>" value="">
+        <!-- <input id="track-input" placeholder="Track Id" value=""> -->
+        <button class="btn btn-default" id="get-track-info">Get song data</button>
+        <div id="track-response"></div>
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script>
-      (function() {
-
-        /**
-         * Obtains parameters from the hash of the URL
-         * @return Object
-         */
-        function getHashParams() {
-          var hashParams = {};
-          var e, r = /([^&;=]+)=?([^&;]*)/g,
-              q = window.location.hash.substring(1);
-          while ( e = r.exec(q)) {
-             hashParams[e[1]] = decodeURIComponent(e[2]);
-          }
-          return hashParams;
-        }
-
-        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
-            userProfilePlaceholder = document.getElementById('user-profile');
-
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
-
-        var params = getHashParams();
-
-        var access_token = params.access_token,
-            refresh_token = params.refresh_token,
-            error = params.error;
-
-        if (error) {
-          alert('There was an error during the authentication');
-        } else {
-          if (access_token) {
-            // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
-
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                  $('#login').hide();
-                  $('#loggedin').show();
-                }
-            });
-          } else {
-              // render initial screen
-              $('#login').show();
-              $('#loggedin').hide();
-          }
-
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
-        }
-      })();
-    </script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
 
